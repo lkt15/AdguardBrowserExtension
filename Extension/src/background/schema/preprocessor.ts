@@ -35,6 +35,11 @@ export class SchemaPreprocessor {
     public static numberValidator = zod.preprocess(SchemaPreprocessor.castStringToNumber, zod.number());
 
     /**
+     * Runtime {@link zod} runtime validator with {@link castStringToString} preprocessor.
+     */
+    public static stringValidator = zod.preprocess(SchemaPreprocessor.castStringToString, zod.string());
+
+    /**
      * If {@link value} is string, cast it to number, else returns original value.
      *
      * @param value Preprocessed value.
@@ -67,12 +72,14 @@ export class SchemaPreprocessor {
     }
 
     /**
-     * If {@link value} is string, deletes escaped quotes, else returns original value.
+     * If {@link value} is string, parses it via JSON parsed, else returns original value.
      *
      * @param value Preprocessed value.
-     * @returns Boolean value, if string passed, else returns original value.
+     * @returns If a string is passed, the string value with the escaped
+     * quotation marks removed (if any were in the string),
+     * otherwise the original value is returned.
      */
-    public static castStringToString(value: unknown): string | unknown {
+    private static castStringToString(value: unknown): string | unknown {
         if (typeof value === 'string') {
             try {
                 return String(JSON.parse(value));

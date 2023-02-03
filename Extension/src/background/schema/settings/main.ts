@@ -92,7 +92,8 @@ export const settingsValidator = zod.object({
     [SettingOption.SelfDestructThirdPartyCookiesTime]: SchemaPreprocessor.numberValidator,
     [SettingOption.SelfDestructFirstPartyCookies]: SchemaPreprocessor.booleanValidator,
     [SettingOption.SelfDestructFirstPartyCookiesTime]: SchemaPreprocessor.numberValidator,
-    [SettingOption.AppearanceTheme]: zod.enum(['system', 'dark', 'light']),
+    [SettingOption.AppearanceTheme]: SchemaPreprocessor.stringValidator
+        .pipe(zod.enum(['system', 'dark', 'light'])),
     [SettingOption.UserFilterEnabled]: SchemaPreprocessor.booleanValidator,
     [SettingOption.HideRateBlock]: SchemaPreprocessor.booleanValidator,
     [SettingOption.UserRulesEditorWrap]: SchemaPreprocessor.booleanValidator,

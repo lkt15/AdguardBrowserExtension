@@ -37,11 +37,9 @@ export const generalSettingsConfigValidator = zod.object({
     [GeneralSettingsOption.AutodetectFilters]: zod.boolean(),
     [GeneralSettingsOption.SafebrowsingEnabled]: zod.boolean(),
     [GeneralSettingsOption.FiltersUpdatePeriod]: zod.number().int(),
-    // TODO: check
-    [GeneralSettingsOption.AppearanceTheme]: zod.preprocess(
-        SchemaPreprocessor.castStringToString,
-        zod.enum(['system', 'dark', 'light']),
-    ).optional(),
+    [GeneralSettingsOption.AppearanceTheme]: SchemaPreprocessor.stringValidator
+        .pipe(zod.enum(['system', 'dark', 'light']))
+        .optional(),
 });
 
 export type GeneralSettingsConfig = zod.infer<typeof generalSettingsConfigValidator>;
