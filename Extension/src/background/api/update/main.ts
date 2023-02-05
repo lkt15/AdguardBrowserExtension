@@ -150,15 +150,23 @@ export class UpdateApi {
             delete currentSettings[SettingOption.Metadata];
         }
 
-        // move them to new fields
-        if (currentSettings?.['default-whitelist-mode'] !== undefined) {
-            currentSettings[SettingOption.DefaultAllowlistMode] = currentSettings['default-whitelist-mode'];
-            delete currentSettings['default-whitelist-mode'];
+        // rename fields
+        let keyToCheck = 'default-whitelist-mode';
+        if (currentSettings?.[keyToCheck] !== undefined) {
+            currentSettings[SettingOption.DefaultAllowlistMode] = currentSettings[keyToCheck];
+            delete currentSettings[keyToCheck];
         }
 
-        if (currentSettings?.['white-list-domains'] !== undefined) {
-            currentSettings[SettingOption.AllowlistDomains] = currentSettings['white-list-domains'];
-            delete currentSettings['white-list-domains'];
+        keyToCheck = 'white-list-domains';
+        if (currentSettings?.[keyToCheck] !== undefined) {
+            currentSettings[SettingOption.AllowlistDomains] = currentSettings[keyToCheck];
+            delete currentSettings[keyToCheck];
+        }
+
+        keyToCheck = 'stealth_disable_stealth_mode';
+        if (currentSettings?.[keyToCheck] !== undefined) {
+            currentSettings[SettingOption.DisableStealthMode] = currentSettings[keyToCheck];
+            delete currentSettings[keyToCheck];
         }
 
         // New group state 'toggled' field added in 4.2
