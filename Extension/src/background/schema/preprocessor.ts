@@ -25,17 +25,17 @@ import zod from 'zod';
  */
 export class SchemaPreprocessor {
     /**
-     * Runtime {@link zod} validator with {@link castStringToBoolean} preprocessor.
+     * Runtime {@link zod} validator with {@link SchemaPreprocessor.castStringToBoolean} preprocessor.
      */
     public static booleanValidator = zod.preprocess(SchemaPreprocessor.castStringToBoolean, zod.boolean());
 
     /**
-     * Runtime {@link zod} runtime validator with {@link castStringToNumber} preprocessor.
+     * Runtime {@link zod} runtime validator with {@link SchemaPreprocessor.castStringToNumber} preprocessor.
      */
     public static numberValidator = zod.preprocess(SchemaPreprocessor.castStringToNumber, zod.number());
 
     /**
-     * Runtime {@link zod} runtime validator with {@link castStringToString} preprocessor.
+     * Runtime {@link zod} runtime validator with {@link SchemaPreprocessor.castStringToString} preprocessor.
      */
     public static stringValidator = zod.preprocess(SchemaPreprocessor.castStringToString, zod.string());
 

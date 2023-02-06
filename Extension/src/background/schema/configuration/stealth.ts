@@ -17,6 +17,8 @@
  */
 import zod from 'zod';
 
+import { SchemaPreprocessor } from '../preprocessor';
+
 // Stealth configuration
 
 export const enum StealthOption {
@@ -26,10 +28,10 @@ export const enum StealthOption {
     SendDoNotTrack = 'stealth-send-do-not-track',
     BlockWebRTC = 'stealth-block-webrtc',
     RemoveXClientData = 'stealth-remove-x-client',
-    BlockThirdPartyCookies = 'stealth-block-third-party-cookies',
-    BlockThirdPartyCookiesTime = 'stealth-block-third-party-cookies-time',
-    BlockFirstPartyCookies = 'stealth-block-first-party-cookies',
-    BlockFirstPartyCookiesTime = 'stealth-block-first-party-cookies-time',
+    SelfDestructThirdPartyCookies = 'stealth-block-third-party-cookies',
+    SelfDestructThirdPartyCookiesTime = 'stealth-block-third-party-cookies-time',
+    SelfDestructFirstPartyCookies = 'stealth-block-first-party-cookies',
+    SelfDestructFirstPartyCookiesTime = 'stealth-block-first-party-cookies-time',
     BlockKnownTrackers = 'block-known-trackers',
     StripTrackingParams = 'strip-tracking-parameters',
 }
@@ -41,10 +43,15 @@ export const stealthConfigValidator = zod.object({
     [StealthOption.SendDoNotTrack]: zod.boolean(),
     [StealthOption.BlockWebRTC]: zod.boolean(),
     [StealthOption.RemoveXClientData]: zod.boolean(),
-    [StealthOption.BlockThirdPartyCookies]: zod.boolean(),
-    [StealthOption.BlockThirdPartyCookiesTime]: zod.number().int().optional(),
-    [StealthOption.BlockFirstPartyCookies]: zod.boolean(),
-    [StealthOption.BlockFirstPartyCookiesTime]: zod.number().int().optional(),
+    [StealthOption.SelfDestructThirdPartyCookies]: zod.boolean(),
+    [StealthOption.SelfDestructThirdPartyCookiesTime]: SchemaPreprocessor.stringValidator
+        .pipe(SchemaPreprocessor.numberValidator)
+        .pipe(zod.number().int()),
+    [StealthOption.SelfDestructFirstPartyCookies]: zod.boolean(),
+    [StealthOption.SelfDestructFirstPartyCookiesTime]: zod.preprocess(
+        SchemaPreprocessor.castStringToNumberTest,
+        zod.number(),
+    ).pipe(zod.number().int()),
     [StealthOption.BlockKnownTrackers]: zod.boolean().optional(),
     [StealthOption.StripTrackingParams]: zod.boolean(),
 });
