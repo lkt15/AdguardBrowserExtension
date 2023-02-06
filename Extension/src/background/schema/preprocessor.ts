@@ -30,14 +30,25 @@ export class SchemaPreprocessor {
     public static booleanValidator = zod.preprocess(SchemaPreprocessor.castStringToBoolean, zod.boolean());
 
     /**
-     * Runtime {@link zod} runtime validator with {@link SchemaPreprocessor.castStringToNumber} preprocessor.
+     * Runtime {@link zod} validator with {@link SchemaPreprocessor.castStringToNumber} preprocessor.
      */
     public static numberValidator = zod.preprocess(SchemaPreprocessor.castStringToNumber, zod.number());
 
     /**
-     * Runtime {@link zod} runtime validator with {@link SchemaPreprocessor.castStringToString} preprocessor.
+     * Runtime {@link zod} validator with {@link SchemaPreprocessor.castStringToString} preprocessor.
      */
     public static stringValidator = zod.preprocess(SchemaPreprocessor.castStringToString, zod.string());
+
+    /**
+     * Runtime {@link zod} validator with preprocessing first by {@link SchemaPreprocessor.castStringToString},
+     * then by {@link SchemaPreprocessor.castStringToNumber}.
+     */
+    public static stringThenNumberValidator = zod.preprocess((value: unknown) => {
+        // Remove escaped quotes "\"" from string
+        const cleanString = SchemaPreprocessor.castStringToString(value);
+        // Then parse string to numer
+        return SchemaPreprocessor.castStringToNumber(cleanString);
+    }, zod.number());
 
     /**
      * If {@link value} is string, cast it to number, else returns original value.

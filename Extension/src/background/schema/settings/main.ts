@@ -90,15 +90,11 @@ export const settingsValidator = zod.object({
     [SettingOption.RemoveXClientData]: SchemaPreprocessor.booleanValidator,
     [SettingOption.BlockWebRTC]: SchemaPreprocessor.booleanValidator,
     [SettingOption.SelfDestructThirdPartyCookies]: SchemaPreprocessor.booleanValidator,
-    [SettingOption.SelfDestructThirdPartyCookiesTime]: zod.preprocess(
-        SchemaPreprocessor.castStringToNumberTest,
-        zod.number(),
-    ).pipe(zod.number().int()),
+    [SettingOption.SelfDestructThirdPartyCookiesTime]: SchemaPreprocessor.stringThenNumberValidator
+        .pipe(zod.number().int()),
     [SettingOption.SelfDestructFirstPartyCookies]: SchemaPreprocessor.booleanValidator,
-    [SettingOption.SelfDestructFirstPartyCookiesTime]: zod.preprocess(
-        SchemaPreprocessor.castStringToNumberTest,
-        zod.number(),
-    ).pipe(zod.number().int()),
+    [SettingOption.SelfDestructFirstPartyCookiesTime]: SchemaPreprocessor.stringThenNumberValidator
+        .pipe(zod.number().int()),
     [SettingOption.AppearanceTheme]: SchemaPreprocessor.stringValidator
         .pipe(zod.enum(['system', 'dark', 'light'])),
     [SettingOption.UserFilterEnabled]: SchemaPreprocessor.booleanValidator,

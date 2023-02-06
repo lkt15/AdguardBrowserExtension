@@ -44,14 +44,11 @@ export const stealthConfigValidator = zod.object({
     [StealthOption.BlockWebRTC]: zod.boolean(),
     [StealthOption.RemoveXClientData]: zod.boolean(),
     [StealthOption.SelfDestructThirdPartyCookies]: zod.boolean(),
-    [StealthOption.SelfDestructThirdPartyCookiesTime]: SchemaPreprocessor.stringValidator
-        .pipe(SchemaPreprocessor.numberValidator)
+    [StealthOption.SelfDestructThirdPartyCookiesTime]: SchemaPreprocessor.stringThenNumberValidator
         .pipe(zod.number().int()),
     [StealthOption.SelfDestructFirstPartyCookies]: zod.boolean(),
-    [StealthOption.SelfDestructFirstPartyCookiesTime]: zod.preprocess(
-        SchemaPreprocessor.castStringToNumberTest,
-        zod.number(),
-    ).pipe(zod.number().int()),
+    [StealthOption.SelfDestructFirstPartyCookiesTime]: SchemaPreprocessor.stringThenNumberValidator
+        .pipe(zod.number().int()),
     [StealthOption.BlockKnownTrackers]: zod.boolean().optional(),
     [StealthOption.StripTrackingParams]: zod.boolean(),
 });
