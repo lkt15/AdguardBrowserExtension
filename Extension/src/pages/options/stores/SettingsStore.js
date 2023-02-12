@@ -296,6 +296,7 @@ class SettingsStore {
 
     @computed
     get lastUpdateTime() {
+        // TODO: lastCheckTime or lastUpdateTime?
         return Math.max(...this.filters.map((filter) => filter.lastCheckTime || 0));
     }
 

@@ -24,7 +24,8 @@ import { SchemaPreprocessor } from '../preprocessor';
 export const filterVersionDataValidator = zod.object({
     version: zod.string(),
     lastCheckTime: zod.number(),
-    lastUpdateTime: zod.number(),
+    // lastUpdateTime can be undefined for custom filters
+    lastUpdateTime: zod.number().optional(),
     expires: zod.number(),
 });
 

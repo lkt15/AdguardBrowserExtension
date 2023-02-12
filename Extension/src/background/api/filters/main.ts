@@ -50,6 +50,7 @@ import { CommonFilterApi } from './common';
 import { CustomFilterApi } from './custom';
 import { PageStatsApi } from './page-stats';
 import { HitStatsApi } from './hit-stats';
+import { getErrorMessage } from '../../../common/error';
 
 export type FilterMetadata = RegularFilterMetadata | CustomFilterMetadata;
 
@@ -333,7 +334,9 @@ export class FiltersApi {
             const i18nMetadata = i18nMetadataValidator.parse(JSON.parse(storageData));
             i18nMetadataStorage.setCache(i18nMetadata);
         } catch (e) {
-            Log.warn(`Can't parse data from ${i18nMetadataStorage.key} storage, load it from local assets`);
+            const errMessage = getErrorMessage(e);
+            Log.warn(`Can't parse data from "${i18nMetadataStorage.key}" storage, load it from local assets.`
+                    + ` Origin error: ${errMessage}`);
             await FiltersApi.loadI18nMetadataFromBackend(false);
         }
     }
@@ -354,7 +357,9 @@ export class FiltersApi {
             const metadata = metadataValidator.parse(JSON.parse(storageData));
             metadataStorage.setCache(metadata);
         } catch (e) {
-            Log.warn(`Can't parse data from ${metadataStorage.key} storage, load it from local assets`);
+            const errMessage = getErrorMessage(e);
+            Log.warn(`Can't parse data from "${metadataStorage.key}" storage, load it from local assets.`
+                    + ` Origin error: ${errMessage}`);
             await FiltersApi.loadMetadataFromFromBackend(false);
         }
     }
@@ -390,7 +395,9 @@ export class FiltersApi {
 
             filterStateStorage.setData(data);
         } catch (e) {
-            Log.warn(`Can't parse data from ${filterStateStorage.key} storage, load default states`);
+            const errMessage = getErrorMessage(e);
+            Log.warn(`Can't parse data from "${filterStateStorage.key}" storage, load default states.`
+                    + ` Origin error: ${errMessage}`);
             filterStateStorage.setData(FilterStateStorage.applyMetadata({}, metadata));
         }
     }
@@ -415,7 +422,9 @@ export class FiltersApi {
 
             groupStateStorage.setData(data);
         } catch (e) {
-            Log.warn(`Can't parse data from ${groupStateStorage.key} storage, set default states`);
+            const errMessage = getErrorMessage(e);
+            Log.warn(`Can't parse data from "${groupStateStorage.key}" storage, set default states.`
+                    + ` Origin error: ${errMessage}`);
             groupStateStorage.setData(GroupStateStorage.applyMetadata({}, metadata));
         }
     }
@@ -440,7 +449,9 @@ export class FiltersApi {
 
             filterVersionStorage.setData(data);
         } catch (e) {
-            Log.warn(`Can't parse data from ${filterVersionStorage.key} storage, set default states`);
+            const errMessage = getErrorMessage(e);
+            Log.warn(`Can't parse data from "${filterVersionStorage.key}" storage, set default states.`
+                    + ` Origin error: ${errMessage}`);
             filterVersionStorage.setData(FilterVersionStorage.applyMetadata({}, metadata));
         }
     }
