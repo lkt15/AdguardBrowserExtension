@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../tools/constants';
 
 import {
     getMetadataFixture,
@@ -23,13 +24,13 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
         respondImmediately: true,
     });
 
-    server.respondWith('GET', /\/filters.json/, [
+    server.respondWith('GET', new RegExp(`/${METADATA_FILE_NAME}`), [
         200,
         { 'Content-Type': 'application/json' },
         JSON.stringify(metadata),
     ]);
 
-    server.respondWith('GET', /\/filters_i18n.json/, [
+    server.respondWith('GET', new RegExp(`/${I18N_METADATA_FILE_NAME}`), [
         200,
         { 'Content-Type': 'application/json' },
         JSON.stringify(i18nMetadata),

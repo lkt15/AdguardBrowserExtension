@@ -27,6 +27,7 @@ export const enum UserFilterOption {
 
 export const userFilterValidator = zod.object({
     [UserFilterOption.Rules]: zod.string(),
+    // TODO: This seems to be an obsolete field. Make sure it is not in use.
     [UserFilterOption.DisabledRules]: zod.string(),
     [UserFilterOption.Enabled]: zod.boolean().optional(),
 });

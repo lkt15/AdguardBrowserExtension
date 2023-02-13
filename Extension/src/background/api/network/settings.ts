@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with AdGuard Browser Extension. If not, see <http://www.gnu.org/licenses/>.
  */
+import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../../../tools/constants';
 import { UserAgent } from '../../../common/user-agent';
 import { BrowserUtils } from '../../utils/browser-utils';
 
@@ -83,7 +84,7 @@ export class NetworkSettings {
      */
     get filtersMetadataUrl(): string {
         const params = BrowserUtils.getExtensionParams();
-        return `${this.filtersUrl}/filters.js?${params.join('&')}`;
+        return `${this.filtersUrl}/${METADATA_FILE_NAME}?${params.join('&')}`;
     }
 
     /**
@@ -93,7 +94,7 @@ export class NetworkSettings {
      */
     get filtersI18nMetadataUrl(): string {
         const params = BrowserUtils.getExtensionParams();
-        return `${this.filtersUrl}/filters_i18n.json?${params.join('&')}`;
+        return `${this.filtersUrl}/${I18N_METADATA_FILE_NAME}?${params.join('&')}`;
     }
 
     /**
