@@ -26,13 +26,13 @@ export const enum CustomFilterOption {
     Enabled = 'enabled',
 }
 
-export const customFiltersConfigValidator = zod.array(
-    zod.object({
-        [CustomFilterOption.CustomUrl]: zod.string(),
-        [CustomFilterOption.Title]: zod.string().optional(),
-        [CustomFilterOption.Trusted]: zod.boolean().optional(),
-        [CustomFilterOption.Enabled]: zod.boolean().optional(),
-    }),
-);
+const customFilterValidator = zod.object({
+    [CustomFilterOption.CustomUrl]: zod.string(),
+    [CustomFilterOption.Title]: zod.string().optional(),
+    [CustomFilterOption.Trusted]: zod.boolean().optional(),
+    [CustomFilterOption.Enabled]: zod.boolean().optional(),
+});
+export type CustomFilterConfig = zod.infer<typeof customFilterValidator>;
 
+export const customFiltersConfigValidator = zod.array(customFilterValidator);
 export type CustomFiltersConfig = zod.infer<typeof customFiltersConfigValidator>;
