@@ -229,15 +229,106 @@ export const getEmptyStatisticDataFixture = (): GetStatisticsDataResponse => {
 export const SETTINGS_V_1_0 = {
     'protocol-version': '1.0',
     'general-settings': {
-        'allow-acceptable-ads': true,
+        'app-language': 'en-US',
+        'allow-acceptable-ads': false,
         'show-blocked-ads-count': true,
         'autodetect-filters': true,
-        'safebrowsing-enabled': false,
-        'filters-update-period': -1,
-        'appearance-theme': 'system',
+        'safebrowsing-enabled': true,
+        'filters-update-period': 86400000,
+        // Appearance theme can includes escaped quotes when extension will get
+        // old settings from storage.
+        'appearance-theme': '\"dark\"',
     },
     'extension-specific-settings': {
-        'use-optimized-filters': false,
+        'use-optimized-filters': true,
+        'collect-hits-count': false,
+        'show-context-menu': true,
+        'show-info-about-adguard': false,
+        'show-app-updated-info': true,
+        'hide-rate-adguard': true,
+        'user-rules-editor-wrap': false,
+    },
+    'filters': {
+        'enabled-filters': [14, 16, 17, 1, 224, 2, 3, 4, 6, 11],
+        'enabled-groups': [1, 2, 3, 4, 5, 6, 7, 0],
+        'custom-filters': [
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/css-rules/css-rules.txt',
+                'enabled': false,
+                'title': 'Rules for CSS tests',
+            },
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/element-hiding-rules/test-element-hiding-rules.txt',
+                'enabled': true,
+                'title': 'Rules for element hiding rules test',
+            },
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/generichide-rules/generichide-rules.txt',
+                'enabled': true,
+                'title': 'Rules for generic hide tests',
+                'trusted': true,
+            },
+        ],
+        'user-filter': {
+            'rules': '||example.com^$document\nexample.org###h1',
+            'disabled-rules': '',
+            'enabled': true,
+        },
+        'whitelist': {
+            'inverted': true,
+            'domains': [
+                'domain1.com',
+                'domain2.com',
+            ],
+            'inverted-domains': [
+                'domain3.com',
+                'domain4.com',
+            ],
+            'enabled': true,
+        },
+    },
+    'stealth': {
+        'stealth_disable_stealth_mode': false,
+        'stealth-hide-referrer': true,
+        'stealth-hide-search-queries': true,
+        'stealth-send-do-not-track': true,
+        'stealth-block-webrtc': true,
+        'stealth-remove-x-client': true,
+        'stealth-block-third-party-cookies': true,
+        'stealth-block-third-party-cookies-time': 1080,
+        'stealth-block-first-party-cookies': true,
+        'stealth-block-first-party-cookies-time': '4444',
+        'block-known-trackers': true,
+        'strip-tracking-parameters': true,
+    },
+};
+
+// Remove obsoleted properties
+const { whitelist, ...migratedFilters } = SETTINGS_V_1_0['filters'];
+
+export const SETTINGS_V_2_0 = {
+    'protocol-version': '2.0',
+    'general-settings': SETTINGS_V_1_0['general-settings'],
+    'extension-specific-settings': SETTINGS_V_1_0['extension-specific-settings'],
+    'filters': {
+        ...migratedFilters,
+        'allowlist': whitelist,
+    },
+    'stealth': SETTINGS_V_1_0.stealth,
+};
+
+export const EXPORTED_SETTINGS_V_2_0 = {
+    'protocol-version': '2.0',
+    'general-settings': {
+        'allow-acceptable-ads': false,
+        'show-blocked-ads-count': true,
+        'autodetect-filters': true,
+        'safebrowsing-enabled': true,
+        'filters-update-period': 86400000,
+        'appearance-theme': 'dark',
+    },
+    'extension-specific-settings': {
+        'use-optimized-filters': true,
         'collect-hits-count': false,
         'show-context-menu': true,
         'show-info-about-adguard': false,
@@ -247,61 +338,79 @@ export const SETTINGS_V_1_0 = {
     },
     'filters': {
         'enabled-filters': [
+            1,
             2,
-            10,
+            3,
+            4,
+            6,
+            11,
+            14,
+            16,
+            17,
+            224,
+            1001,
+            1002,
         ],
         'enabled-groups': [
             0,
             1,
+            2,
+            3,
+            4,
+            5,
             6,
             7,
         ],
-        'custom-filters': [],
+        'custom-filters': [
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/css-rules/css-rules.txt',
+                'title': 'Rules for CSS tests',
+                'trusted': false,
+                'enabled': false,
+            },
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/element-hiding-rules/test-element-hiding-rules.txt',
+                'title': 'Rules for element hiding rules test',
+                'trusted': false,
+                'enabled': true,
+            },
+            {
+                'customUrl': 'https://testcases.agrd.dev/Filters/generichide-rules/generichide-rules.txt',
+                'title': 'Rules for generic hide tests',
+                'trusted': true,
+                'enabled': true,
+            },
+        ],
         'user-filter': {
             'enabled': true,
-            'rules': '',
+            'rules': '||example.com^$document\nexample.org###h1',
             'disabled-rules': '',
         },
-        'whitelist': {
-            'enabled': false,
-            'inverted': false,
+        'allowlist': {
+            'enabled': true,
+            'inverted': true,
             'domains': [
-                'allowdomain.com',
-                'allowdomain.net',
+                'domain1.com',
+                'domain2.com',
             ],
             'inverted-domains': [
-                'invertedallowlist.com',
+                'domain3.com',
+                'domain4.com',
             ],
         },
     },
     'stealth': {
-        'stealth_disable_stealth_mode': true,
+        'stealth_disable_stealth_mode': false,
         'stealth-hide-referrer': true,
         'stealth-hide-search-queries': true,
         'stealth-send-do-not-track': true,
-        'stealth-block-webrtc': false,
+        'stealth-block-webrtc': true,
         'stealth-remove-x-client': true,
         'stealth-block-third-party-cookies': true,
-        'stealth-block-third-party-cookies-time': 2880,
-        'stealth-block-first-party-cookies': false,
-        'stealth-block-first-party-cookies-time': 4320,
-        'block-known-trackers': false,
-        'strip-tracking-parameters': false,
-    },
-};
-
-export const SETTINGS_V_2_0 = {
-    'general-settings': SETTINGS_V_1_0['general-settings'],
-    'extension-specific-settings': SETTINGS_V_1_0['extension-specific-settings'],
-    'stealth': SETTINGS_V_1_0.stealth,
-    'protocol-version': '2.0',
-    'filters': {
-        'enabled-filters': SETTINGS_V_1_0.filters['enabled-filters'],
-        'enabled-groups': SETTINGS_V_1_0.filters['enabled-groups'],
-        'custom-filters': SETTINGS_V_1_0.filters['custom-filters'],
-        'user-filter': SETTINGS_V_1_0.filters['user-filter'],
-        'allowlist': {
-            ...SETTINGS_V_1_0.filters.whitelist,
-        },
+        'stealth-block-third-party-cookies-time': 1080,
+        'stealth-block-first-party-cookies': true,
+        'stealth-block-first-party-cookies-time': 4444,
+        'block-known-trackers': true,
+        'strip-tracking-parameters': true,
     },
 };

@@ -1,9 +1,5 @@
 import sinon from 'sinon';
-import {
-    RootOption,
-    FiltersOption,
-    CustomFilterConfig,
-} from '../../../Extension/src/background/schema';
+import { RootOption, FiltersOption } from '../../../Extension/src/background/schema';
 import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../Extension/src/common/constants';
 
 import {
@@ -12,6 +8,7 @@ import {
     getFilterTextFixture,
     filterTextFixture,
     getCustomExportFixture,
+    SETTINGS_V_1_0,
 } from '../fixtures';
 
 const metadata = getMetadataFixture();
@@ -83,17 +80,26 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
     ]);
 
     const customFiltersFixture = getCustomExportFixture()[RootOption.Filters][FiltersOption.CustomFilters];
-    // Dynamically create mocks for each custom filter urls
-    customFiltersFixture.forEach(({ customUrl }: CustomFilterConfig) => {
+    const customFiltersFixture2 = SETTINGS_V_1_0['filters']['custom-filters'];
+
+    const customFiltersUrls = [
+        ...customFiltersFixture.map(({ customUrl }) => customUrl),
+        ...customFiltersFixture2.map(({ customUrl }) => customUrl),
+    ];
+
+    // Filter only uniq urls
+    Array.from(new Set(customFiltersUrls))
+        // Dynamically create mocks for each custom filter urls
+        .forEach((customUrl: string) => {
         // Somehow exact mock with customUrl doesn't work, so create regexp-mask
         // with url part after last slash.
-        const mockAddr = customUrl.slice(customUrl.lastIndexOf('/'));
-        server.respondWith('GET', new RegExp(mockAddr), [
-            200,
-            { 'Content-Type': 'text/plain' },
-            filterTextFixture,
-        ]);
-    });
+            const mockAddr = customUrl.slice(customUrl.lastIndexOf('/'));
+            server.respondWith('GET', new RegExp(mockAddr), [
+                200,
+                { 'Content-Type': 'text/plain' },
+                filterTextFixture,
+            ]);
+        });
 
     return server;
 };

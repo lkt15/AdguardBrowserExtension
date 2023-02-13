@@ -18,6 +18,8 @@ import {
     getCustomExportFixture,
     mockLocalStorage,
     filterNameFixture,
+    SETTINGS_V_1_0,
+    EXPORTED_SETTINGS_V_2_0,
 } from '../../../helpers';
 
 describe('Settings Api', () => {
@@ -114,7 +116,6 @@ describe('Settings Api', () => {
             expect(exportedSettings).toStrictEqual(JSON.stringify(getDefaultExportFixture()));
         });
 
-        // TODO: Add tests for import old settings and old user rules
         it('Imports exported settings', async () => {
             const userConfig = getCustomExportFixture();
             let importResult = await SettingsApi.import(JSON.stringify(userConfig));
@@ -132,6 +133,21 @@ describe('Settings Api', () => {
             userConfig[RootOption.Filters][FiltersOption.CustomFilters][1]!.trusted = false;
             userConfig[RootOption.Filters][FiltersOption.CustomFilters][1]!.enabled = false;
             expect(importedSettingsString).toStrictEqual(JSON.stringify(userConfig));
+        });
+
+        it('Imports settings from 4.1.X version', async () => {
+            const settings = SETTINGS_V_1_0;
+            let importResult = await SettingsApi.import(JSON.stringify(settings));
+
+            expect(importResult).toBeTruthy();
+
+            const exportedSettings = await SettingsApi.export();
+            importResult = await SettingsApi.import(exportedSettings);
+
+            expect(importResult).toBeTruthy();
+
+            const exportedSettingsString = await SettingsApi.export();
+            expect(exportedSettingsString).toStrictEqual(JSON.stringify(EXPORTED_SETTINGS_V_2_0));
         });
 
         it('Reset default settings', async () => {
