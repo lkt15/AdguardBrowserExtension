@@ -129,11 +129,17 @@ export class CommonFilterApi {
             enabled: !!currentFilterState?.enabled,
         });
 
+        const filterMetadata = CommonFilterApi.getFilterMetadata(filterId);
+
+        if (!filterMetadata) {
+            throw new Error(`Not found metadata for filter id ${filterId}`);
+        }
+
         const {
             version,
             expires,
             timeUpdated,
-        } = CommonFilterApi.getFilterMetadata(filterId) as RegularFilterMetadata;
+        } = filterMetadata;
 
         filterVersionStorage.set(filterId, {
             version,
@@ -167,7 +173,15 @@ export class CommonFilterApi {
 
         filterIds.push(...CommonFilterApi.getLangSuitableFilters());
 
-        await Promise.allSettled(filterIds.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, false)));
+        const tasks = filterIds.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, false));
+        const promises = await Promise.allSettled(tasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error('Can\t load filter rules from backed due to: ', promise.reason);
+            }
+        });
 
         filterStateStorage.enableFilters(filterIds);
     }

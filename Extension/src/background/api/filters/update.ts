@@ -29,6 +29,7 @@ import {
 import { DEFAULT_FILTERS_UPDATE_PERIOD } from '../../../common/settings';
 import { CustomFilterApi } from './custom';
 import { CommonFilterApi } from './common';
+import { Log } from '../../../common/log';
 
 /**
  * API for filter rules updates.
@@ -127,7 +128,14 @@ export class FilterUpdateApi {
             }
         });
 
-        await Promise.allSettled(updateTasks);
+        const promises = await Promise.allSettled(updateTasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error('Can\'t update filter due to: ', promise.reason);
+            }
+        });
 
         return updatedFiltersMetadata;
     }

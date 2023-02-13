@@ -156,7 +156,15 @@ export class FiltersApi {
 
         await FiltersApi.loadMetadata(remote);
 
-        await Promise.allSettled(unloadedFilters.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, remote)));
+        const tasks = unloadedFilters.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, remote));
+        const promises = await Promise.allSettled(tasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error('Can\'t load filter rules due to: ', promise.reason);
+            }
+        });
     }
 
     /**
@@ -198,7 +206,15 @@ export class FiltersApi {
 
         await FiltersApi.loadMetadata(true);
 
-        await Promise.allSettled(commonFilters.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, true)));
+        const tasks = commonFilters.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, true));
+        const promises = await Promise.allSettled(tasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error('Can\'t load filter rules due to: ', promise.reason);
+            }
+        });
 
         filterStateStorage.enableFilters(filtersIds);
     }
@@ -473,6 +489,12 @@ export class FiltersApi {
                 Log.info(`Filter with id: ${id} removed from the storage`);
             });
 
-        await Promise.allSettled(tasks);
+        const promises = await Promise.allSettled(tasks);
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error('Can\'t remove obsoleted filter from storage due to: ', promise.reason);
+            }
+        });
     }
 }

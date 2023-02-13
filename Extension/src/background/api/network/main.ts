@@ -19,7 +19,7 @@ import browser from 'webextension-polyfill';
 import FiltersDownloader from '@adguard/filters-downloader/browser';
 
 import { NetworkSettings } from './settings';
-import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../../../tools/constants';
+import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../common/constants';
 import { UserAgent } from '../../../common/user-agent';
 import {
     I18nMetadata,

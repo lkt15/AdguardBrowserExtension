@@ -363,12 +363,21 @@ export class SettingsApi {
         await SettingsApi.importUserFilter(userFilter);
         SettingsApi.importAllowlist(allowlist);
 
-        const tasks = enabledFilters.map(async filterId => {
-            await CommonFilterApi.loadFilterRulesFromBackend(filterId, false);
-            filterStateStorage.enableFilters([filterId]);
-        });
+        const tasks = enabledFilters
+            .filter((filterId: number) => !CustomFilterApi.isCustomFilter(filterId))
+            .map(async (filterId: number) => {
+                await CommonFilterApi.loadFilterRulesFromBackend(filterId, false);
+                filterStateStorage.enableFilters([filterId]);
+            });
 
-        await Promise.allSettled(tasks);
+        const promises = await Promise.allSettled(tasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error(promise.reason);
+            }
+        });
 
         await CustomFilterApi.createFilters(customFilters as CustomFilterDTO[]);
         groupStateStorage.enableGroups(enabledGroups);
