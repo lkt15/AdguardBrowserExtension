@@ -31,7 +31,6 @@ import { Engine } from '../../../engine';
 import { network } from '../../network';
 import { CustomFilterParsedData, CustomFilterParser } from './parser';
 import { CustomFilterLoader } from './loader';
-import { getErrorMessage } from '../../../../common/error';
 
 /**
  * Data transfer object for {@link CustomFilterApi} methods.
@@ -115,9 +114,8 @@ export class CustomFilterApi {
                 customFilterMetadataStorage.setData([]);
             }
         } catch (e) {
-            const errMessage = getErrorMessage(e);
-            Log.warn('Can\'t parse custom filter metadata from persisted storage, reset to default.'
-                    + ` Origin error: ${errMessage}`);
+            const desc = 'Can\'t parse custom filter metadata from persisted storage, reset to default. Origin err: ';
+            Log.warn(desc, e);
             customFilterMetadataStorage.setData([]);
         }
     }

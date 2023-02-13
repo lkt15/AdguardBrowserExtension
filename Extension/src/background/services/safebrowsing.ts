@@ -29,7 +29,6 @@ import { messageHandler } from '../message-handler';
 import { MessageType, OpenSafebrowsingTrustedMessage } from '../../common/messages';
 import { UserAgent } from '../../common/user-agent';
 import { Log } from '../../common/log';
-import { getErrorMessage } from '../../common/error';
 
 /**
  * SafebrowsingService adds listeners for correct work of {@link SafebrowsingApi} module.
@@ -86,22 +85,18 @@ export class SafebrowsingService {
                                 browser.tabs.remove(tabId);
                             })
                             .catch((e) => {
-                                const errorMessage = getErrorMessage(e);
-                                Log.warn(`Can't open info page about blocked domain. Original error: ${errorMessage}`);
+                                Log.warn('Can\'t open info page about blocked domain. Original error: ', e);
                             });
                     } else {
                         browser.tabs.update(tabId, { url: safebrowsingUrl })
                             .catch((e) => {
-                                const errorMessage = getErrorMessage(e);
                                 Log.warn(`Can't update tab with id ${tabId} to show info page about blocked domain. `
-                                        + `Original error: ${errorMessage}`);
+                                        + 'Original error: ', e);
                             });
                     }
                 })
                 .catch((e) => {
-                    const errorMessage = getErrorMessage(e);
-                    Log.warn(`Can't execute safe browsing check for requested url "${requestUrl}".`
-                            + ` Original err: ${errorMessage}`);
+                    Log.warn(`Can't execute safe browsing check for requested url "${requestUrl}". Original err: `, e);
                 });
         }
     }

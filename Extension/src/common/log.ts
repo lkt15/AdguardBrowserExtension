@@ -17,6 +17,7 @@
  * along with AdGuard Browser Extension. If not, see <http://www.gnu.org/licenses/>.
  */
 import { format } from 'date-fns';
+import { getErrorMessage } from './error';
 
 /**
  * Number presentation of log levels. Order is important. Higher number, more messages to be visible.
@@ -120,7 +121,8 @@ export class Log {
      * @private
      */
     private static errorToString(error: Error): string {
-        return `${error.toString()}\nStack trace:\n${error.stack}`;
+        const message = getErrorMessage(error);
+        return `${message}\nStack trace:\n${error.stack}`;
     }
 
     /**

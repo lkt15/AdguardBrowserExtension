@@ -27,7 +27,6 @@ import {
     PageStatsDataItem,
     pageStatsValidator,
 } from '../../schema';
-import { getErrorMessage } from '../../../common/error';
 
 export type GetStatisticsDataResponse = {
     today: PageStatsDataItem[],
@@ -60,9 +59,8 @@ export class PageStatsApi {
                 pageStatsStorage.setData({});
             }
         } catch (e) {
-            const errMessage = getErrorMessage(e);
-            Log.warn(`Can't parse data from "${pageStatsStorage.key}" storage, set default states.`
-                    + ` Origin error: ${errMessage}`);
+            const desc = `Can't parse data from "${pageStatsStorage.key}" storage, set default states. Origin err: `;
+            Log.warn(desc, e);
             pageStatsStorage.setData({});
         }
     }

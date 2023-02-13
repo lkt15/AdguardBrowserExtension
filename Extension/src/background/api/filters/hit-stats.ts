@@ -18,7 +18,6 @@
 import { debounce } from 'lodash';
 
 import { AntiBannerFiltersId, CUSTOM_FILTERS_START_ID } from '../../../common/constants';
-import { getErrorMessage } from '../../../common/error';
 import { Log } from '../../../common/log';
 import { hitStatsStorageDataValidator } from '../../schema';
 import { hitStatsStorage } from '../../storages';
@@ -54,9 +53,9 @@ export class HitStatsApi {
                 hitStatsStorage.setData({});
             }
         } catch (e) {
-            const errMessage = getErrorMessage(e);
-            Log.warn(`Can't parse data from "${hitStatsStorage.key}" storage, set default states.`
-                    + ` Origin error: ${errMessage}`);
+            const errDescription = `Can't parse data from "${hitStatsStorage.key}" storage,`
+                                + ' set default states. Origin error: ';
+            Log.warn(errDescription, e);
             hitStatsStorage.setData({});
         }
     }
