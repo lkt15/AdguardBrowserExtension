@@ -15,7 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with AdGuard Browser Extension. If not, see <http://www.gnu.org/licenses/>.
  */
-import { App } from './app';
 
-// initialize background services
-App.init();
+import React, { useState } from 'react';
+
+import { Select } from './Select';
+
+import './select.pcss';
+
+export const SelectWithoutContext = ({
+    id,
+    handler,
+    options,
+    value,
+    popupModification = false,
+}) => {
+    const [hidden, setHidden] = useState(true);
+
+    return (
+        <Select
+            id={id}
+            handler={handler}
+            options={options}
+            value={value}
+            hidden={hidden}
+            setHidden={setHidden}
+            popupModification={popupModification}
+        />
+    );
+};
