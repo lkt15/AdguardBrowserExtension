@@ -54,7 +54,7 @@ export class HitStatsApi {
             }
         } catch (e) {
             // eslint-disable-next-line max-len
-            Log.warn(`Can't parse data from "${hitStatsStorage.key}" storage, set default states. Origin error: `, e);
+            Log.warn(`Cannot parse data from "${hitStatsStorage.key}" storage, set default states. Origin error: `, e);
             hitStatsStorage.setData({});
         }
     }

@@ -285,7 +285,7 @@ export class AllowlistApi {
             }
         } catch (e) {
             // eslint-disable-next-line max-len
-            Log.warn(`Can't parse ${storage.key} storage data from persisted storage, reset to default. Origin error: `, e);
+            Log.warn(`Cannot parse ${storage.key} storage data from persisted storage, reset to default. Origin error: `, e);
             storage.setData(defaultData);
         }
     }

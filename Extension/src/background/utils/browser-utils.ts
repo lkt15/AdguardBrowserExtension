@@ -91,7 +91,7 @@ export class BrowserUtils {
             new Version(version);
         } catch (e: unknown) {
             const errorMessage = e instanceof Error ? e.message : 'unknown error';
-            Log.debug(`Can\'t parse version: "${version}", error: "${errorMessage}"`);
+            Log.debug(`Cannot parse version: "${version}", error: "${errorMessage}"`);
             return false;
         }
         return true;

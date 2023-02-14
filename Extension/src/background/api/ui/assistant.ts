@@ -33,10 +33,10 @@ export class AssistantApi {
             try {
                 Engine.api.openAssistant(activeTab.id);
             } catch (e) {
-                Log.warn('Can`t open assistant in active tab due to: ', e);
+                Log.warn('Cannot open assistant in active tab due to: ', e);
             }
         } else {
-            Log.warn('Can`t open assistant in active tab');
+            Log.warn('Cannot open assistant in active tab');
         }
     }
 }

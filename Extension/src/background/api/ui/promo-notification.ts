@@ -96,7 +96,7 @@ export class PromoNotificationApi {
                 const tab = await TabsApi.getActive();
 
                 if (!tab?.id) {
-                    Log.error('Can\'t get active tab');
+                    Log.error('Cannot get active tab');
                     return;
                 }
 

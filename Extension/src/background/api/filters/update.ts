@@ -133,7 +133,7 @@ export class FilterUpdateApi {
         // Handles errors
         promises.forEach((promise) => {
             if (promise.status === 'rejected') {
-                Log.error('Can\'t update filter due to: ', promise.reason);
+                Log.error('Cannot update filter due to: ', promise.reason);
             }
         });
 

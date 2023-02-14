@@ -81,7 +81,7 @@ export class UpdateApi {
                 const schemaMigrationAction = this.schemaMigrationMap[schema];
 
                 if (!schemaMigrationAction) {
-                    throw new Error(`Can't find schema migration action from ${previousSchemaVersion} `
+                    throw new Error(`Cannot find schema migration action from ${previousSchemaVersion} `
                         + `to ${currentSchemaVersion}.`);
                 }
 

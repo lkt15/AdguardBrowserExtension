@@ -89,7 +89,7 @@ export class CommonFilterApi {
         const filterMetadata = CommonFilterApi.getFilterMetadata(filterId);
 
         if (!filterMetadata) {
-            Log.error(`Can't find filter ${filterId} metadata`);
+            Log.error(`Cannot find filter ${filterId} metadata`);
             return null;
         }
 

@@ -87,7 +87,7 @@ export class SettingsApi {
             const settings = settingsValidator.parse(data);
             settingsStorage.setCache(settings);
         } catch (e) {
-            Log.error('Can\'t init settings from storage: ', e);
+            Log.error('Cannot init settings from storage: ', e);
             Log.info('Reverting settings to default values');
             const settings = { ...defaultSettings };
 
