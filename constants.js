@@ -44,5 +44,7 @@ export const TSURLFILTER_VENDOR_OUTPUT = 'vendors/tsurlfilter';
 export const TSWEBEXTENSION_VENDOR_OUTPUT = 'vendors/tswebextension';
 
 // Placed here to use in the node environment and in the browser
-export const METADATA_FILE_NAME = 'filters.json';
-export const I18N_METADATA_FILE_NAME = 'filters_i18n.json';
+// Important: extensions '.js' used for correct work of Cloudflare cache.
+// See https://jira.adguard.com/browse/AG-1901 for details.
+export const METADATA_FILE_NAME = 'filters.js';
+export const I18N_METADATA_FILE_NAME = 'filters_i18n.js';
