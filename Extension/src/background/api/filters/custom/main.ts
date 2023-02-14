@@ -114,8 +114,7 @@ export class CustomFilterApi {
                 customFilterMetadataStorage.setData([]);
             }
         } catch (e) {
-            const desc = 'Can\'t parse custom filter metadata from persisted storage, reset to default. Origin err: ';
-            Log.warn(desc, e);
+            Log.warn('Can\'t parse custom filter metadata from persisted storage, reset to default. Origin error: ', e);
             customFilterMetadataStorage.setData([]);
         }
     }

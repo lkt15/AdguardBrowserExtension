@@ -53,9 +53,8 @@ export class HitStatsApi {
                 hitStatsStorage.setData({});
             }
         } catch (e) {
-            const errDescription = `Can't parse data from "${hitStatsStorage.key}" storage,`
-                                + ' set default states. Origin error: ';
-            Log.warn(errDescription, e);
+            // eslint-disable-next-line max-len
+            Log.warn(`Can't parse data from "${hitStatsStorage.key}" storage, set default states. Origin error: `, e);
             hitStatsStorage.setData({});
         }
     }

@@ -90,8 +90,8 @@ export class SafebrowsingService {
                     } else {
                         browser.tabs.update(tabId, { url: safebrowsingUrl })
                             .catch((e) => {
-                                Log.warn(`Can't update tab with id ${tabId} to show info page about blocked domain. `
-                                        + 'Original error: ', e);
+                                // eslint-disable-next-line max-len
+                                Log.warn(`Can't update tab with id ${tabId} to show info page about blocked domain. Original error: `, e);
                             });
                     }
                 })

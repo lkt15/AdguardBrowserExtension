@@ -30,7 +30,11 @@ export class AssistantApi {
         const activeTab = await TabsApi.getActive();
 
         if (activeTab?.id) {
-            Engine.api.openAssistant(activeTab.id);
+            try {
+                Engine.api.openAssistant(activeTab.id);
+            } catch (e) {
+                Log.warn('Can`t open assistant in active tab due to: ', e);
+            }
         } else {
             Log.warn('Can`t open assistant in active tab');
         }
