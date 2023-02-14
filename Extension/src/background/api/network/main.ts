@@ -18,7 +18,6 @@
 import browser from 'webextension-polyfill';
 import FiltersDownloader from '@adguard/filters-downloader/browser';
 
-import { NetworkSettings } from './settings';
 import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../../../constants';
 import { UserAgent } from '../../../common/user-agent';
 import {
@@ -29,6 +28,8 @@ import {
     Metadata,
     metadataValidator,
 } from '../../schema';
+
+import { NetworkSettings } from './settings';
 
 export type NetworkConfiguration = {
     filtersMetadataUrl?: string,

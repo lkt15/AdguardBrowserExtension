@@ -1,7 +1,7 @@
 import sinon from 'sinon';
-import { RootOption, FiltersOption } from '../../../Extension/src/background/schema';
-import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../Extension/src/common/constants';
 
+import { RootOption, FiltersOption } from '../../../Extension/src/background/schema';
+import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../constants';
 import {
     getMetadataFixture,
     getI18nMetadataFixture,
