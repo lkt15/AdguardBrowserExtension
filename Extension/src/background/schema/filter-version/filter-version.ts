@@ -25,6 +25,7 @@ export const filterVersionDataValidator = zod.object({
     version: zod.string(),
     lastCheckTime: zod.number(),
     // lastUpdateTime can be undefined for custom filters
+    // TODO: Check why
     lastUpdateTime: zod.number().optional(),
     expires: zod.number(),
 });

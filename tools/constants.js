@@ -19,7 +19,7 @@
 /* eslint-disable max-len */
 import path from 'path';
 
-import { METADATA_FILE_NAME, I18N_METADATA_FILE_NAME } from '../Extension/src/common/constants';
+import { METADATA_FILE_NAME, I18N_METADATA_FILE_NAME } from '../constants';
 
 export const ENVS = {
     DEV: 'dev',

@@ -27,6 +27,7 @@ export const customFilterMetadataValidator = zod.object({
     tags: zod.number().array(),
     customUrl: zod.string(),
     // trusted can be undefined for custom filers
+    // TODO: Check why
     trusted: zod.boolean().optional(),
     checksum: zod.string().or(zod.null()),
     version: zod.string(),

@@ -91,8 +91,8 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
     Array.from(new Set(customFiltersUrls))
         // Dynamically create mocks for each custom filter urls
         .forEach((customUrl: string) => {
-        // Somehow exact mock with customUrl doesn't work, so create regexp-mask
-        // with url part after last slash.
+            // Somehow exact mock with customUrl doesn't work, so create regexp-mask
+            // with url part after last slash.
             const mockAddr = customUrl.slice(customUrl.lastIndexOf('/'));
             server.respondWith('GET', new RegExp(mockAddr), [
                 200,

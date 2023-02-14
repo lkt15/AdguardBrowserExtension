@@ -132,7 +132,3 @@ export const enum RequestType {
     Cookie = 'COOKIE',
     Ping = 'PING',
 }
-
-// Placed here to use in the node environment and in the browser
-export const METADATA_FILE_NAME = 'filters.json';
-export const I18N_METADATA_FILE_NAME = 'filters_i18n.json';

@@ -42,3 +42,7 @@ export const XSTATE_VENDOR_OUTPUT = 'vendors/xstate';
 export const LODASH_VENDOR_OUTPUT = 'vendors/lodash';
 export const TSURLFILTER_VENDOR_OUTPUT = 'vendors/tsurlfilter';
 export const TSWEBEXTENSION_VENDOR_OUTPUT = 'vendors/tswebextension';
+
+// Placed here to use in the node environment and in the browser
+export const METADATA_FILE_NAME = 'filters.json';
+export const I18N_METADATA_FILE_NAME = 'filters_i18n.json';

@@ -33,7 +33,7 @@ import {
     OPTIMIZED_FILTER_DOWNLOAD_URL_FORMAT,
     ADGUARD_FILTERS_IDS,
 } from '../constants';
-import { METADATA_FILE_NAME, I18N_METADATA_FILE_NAME } from '../../Extension/src/common/constants';
+import { METADATA_FILE_NAME, I18N_METADATA_FILE_NAME } from '../../constants';
 
 const CHECKSUM_PATTERN = /^\s*!\s*checksum[\s-:]+([\w\+/=]+).*[\r\n]+/i;
 
