@@ -1,12 +1,12 @@
 import sinon from 'sinon';
 
 import { RootOption, FiltersOption } from '../../../Extension/src/background/schema';
-import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../constants';
+import { REMOTE_METADATA_FILE_NAME, REMOTE_I18N_METADATA_FILE_NAME } from '../../../constants';
 import {
     getMetadataFixture,
     getI18nMetadataFixture,
     getFilterTextFixture,
-    filterTextFixture,
+    filterTextWithMetadataFixture,
     getCustomExportFixture,
     SETTINGS_V_1_0,
 } from '../fixtures';
@@ -27,13 +27,13 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
         respondImmediately: true,
     });
 
-    server.respondWith('GET', new RegExp(`/${METADATA_FILE_NAME}`), [
+    server.respondWith('GET', new RegExp(`/${REMOTE_METADATA_FILE_NAME}`), [
         200,
         { 'Content-Type': 'application/json' },
         JSON.stringify(metadata),
     ]);
 
-    server.respondWith('GET', new RegExp(`/${I18N_METADATA_FILE_NAME}`), [
+    server.respondWith('GET', new RegExp(`/${REMOTE_I18N_METADATA_FILE_NAME}`), [
         200,
         { 'Content-Type': 'application/json' },
         JSON.stringify(i18nMetadata),
@@ -68,7 +68,7 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
     server.respondWith('GET', /\/filter_(mobile_)?\d+.txt/, [
         200,
         { 'Content-Type': 'text/plain' },
-        filterTextFixture,
+        filterTextWithMetadataFixture,
     ]);
 
     // Simulate filters bodies for successfully emulate initialization of App
@@ -76,7 +76,7 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
     server.respondWith('GET', /\/filters\/\d+(_optimized)?.txt/, [
         200,
         { 'Content-Type': 'text/plain' },
-        filterTextFixture,
+        filterTextWithMetadataFixture,
     ]);
 
     const customFiltersFixture = getCustomExportFixture()[RootOption.Filters][FiltersOption.CustomFilters];
@@ -97,7 +97,7 @@ export const mockXhrRequests = (): sinon.SinonFakeServer => {
             server.respondWith('GET', new RegExp(mockAddr), [
                 200,
                 { 'Content-Type': 'text/plain' },
-                filterTextFixture,
+                filterTextWithMetadataFixture,
             ]);
         });
 

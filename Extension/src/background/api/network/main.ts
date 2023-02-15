@@ -18,7 +18,7 @@
 import browser from 'webextension-polyfill';
 import FiltersDownloader from '@adguard/filters-downloader/browser';
 
-import { I18N_METADATA_FILE_NAME, METADATA_FILE_NAME } from '../../../../../constants';
+import { LOCALE_METADATA_FILE_NAME, LOCALE_I18N_METADATA_FILE_NAME } from '../../../../../constants';
 import { UserAgent } from '../../../common/user-agent';
 import {
     I18nMetadata,
@@ -133,7 +133,7 @@ export class Network {
      * @returns Object of {@link Metadata}.
      */
     public async getLocalFiltersMetadata(): Promise<Metadata> {
-        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${METADATA_FILE_NAME}`);
+        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${LOCALE_METADATA_FILE_NAME}`);
 
         let response: ExtensionXMLHttpRequest;
 
@@ -166,7 +166,7 @@ export class Network {
      * @returns Object of {@link I18nMetadata}.
      */
     public async getLocalFiltersI18nMetadata(): Promise<I18nMetadata> {
-        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${I18N_METADATA_FILE_NAME}`);
+        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${LOCALE_I18N_METADATA_FILE_NAME}`);
 
         let response: ExtensionXMLHttpRequest;
 
