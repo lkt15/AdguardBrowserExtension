@@ -23,8 +23,10 @@ import { SchemaPreprocessor } from '../preprocessor';
  * Runtime validator for persistent filter state data.
  */
 export const filterStateDataValidator = zod.object({
-    enabled: zod.boolean(),
-    installed: zod.boolean(),
+    // TODO: Check why optional
+    enabled: zod.boolean().optional(),
+    // TODO: Check why optional
+    installed: zod.boolean().optional(),
     loaded: zod.boolean(),
 });
 

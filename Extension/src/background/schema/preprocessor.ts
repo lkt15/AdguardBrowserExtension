@@ -40,6 +40,11 @@ export class SchemaPreprocessor {
     public static stringValidator = zod.preprocess(SchemaPreprocessor.castStringToString, zod.string());
 
     /**
+     * Runtime {@link zod} validator with {@link SchemaPreprocessor.checkEmptyString} preprocessor.
+     */
+    public static skipEmptyStringValidator = zod.preprocess(SchemaPreprocessor.checkEmptyString, zod.unknown());
+
+    /**
      * Runtime {@link zod} validator with preprocessing first by {@link SchemaPreprocessor.castStringToString},
      * then by {@link SchemaPreprocessor.castStringToNumber}.
      */
@@ -97,6 +102,21 @@ export class SchemaPreprocessor {
             } catch (e) {
                 return value;
             }
+        }
+
+        return value;
+    }
+
+    /**
+     * If {@link value} is an empty string, returns undefined.
+     *
+     * @param value Preprocessed value.
+     * @returns Undefined if an empty string is passed,
+     * otherwise the original value is returned.
+     */
+    private static checkEmptyString(value: unknown): undefined | unknown {
+        if (typeof value === 'string' && value === '') {
+            return undefined;
         }
 
         return value;

@@ -17,6 +17,8 @@
  */
 import zod from 'zod';
 
+import { SchemaPreprocessor } from '../preprocessor';
+
 export const customFilterMetadataValidator = zod.object({
     filterId: zod.number(),
     displayNumber: zod.number(),
@@ -32,7 +34,9 @@ export const customFilterMetadataValidator = zod.object({
     checksum: zod.string().or(zod.null()),
     version: zod.string(),
     expires: zod.number(),
-    timeUpdated: zod.number(),
+    // TODO: Check why it can be empty string
+    timeUpdated: SchemaPreprocessor.skipEmptyStringValidator
+        .pipe(zod.number().or(zod.undefined())),
     languages: zod.string().array().optional(),
 });
 
