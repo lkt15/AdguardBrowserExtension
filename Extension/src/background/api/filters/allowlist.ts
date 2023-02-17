@@ -153,8 +153,10 @@ export class AllowlistApi {
      * Updates tswebextension configuration and reload tab after changes apply.
      *
      * @param tabId Tab id.
+     * @param tabRefresh Is tab refresh needed after adding tab url
+     * to the allowlist.
      */
-    public static async removeTabUrlFromAllowlist(tabId: number): Promise<void> {
+    public static async removeTabUrlFromAllowlist(tabId: number, tabRefresh: boolean = false): Promise<void> {
         const mainFrame = tsWebExtTabsApi.getTabMainFrame(tabId);
 
         if (!mainFrame) {
@@ -175,7 +177,9 @@ export class AllowlistApi {
 
         await Engine.update();
 
-        await browser.tabs.reload(tabId);
+        if (tabRefresh) {
+            await browser.tabs.reload(tabId);
+        }
     }
 
     /**

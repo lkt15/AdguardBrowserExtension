@@ -278,6 +278,14 @@ export type AddAllowlistDomainPopupMessage = {
   }
 };
 
+export type UnAllowlistFrameMessage = {
+  type: MessageType.UnAllowlistFrame
+  data: {
+    tabId: number,
+    tabRefresh: boolean,
+  }
+};
+
 export type RemoveAllowlistDomainMessage = {
   type: MessageType.RemoveAllowlistDomain
   data: {

@@ -21,6 +21,7 @@ import {
     SaveAllowlistDomainsMessage,
     AddAllowlistDomainPopupMessage,
     RemoveAllowlistDomainMessage,
+    UnAllowlistFrameMessage,
 } from '../../common/messages';
 import { messageHandler } from '../message-handler';
 import { Engine } from '../engine';
@@ -48,24 +49,17 @@ export class AllowlistService {
     public static init(): void {
         messageHandler.addListener(MessageType.GetAllowlistDomains, AllowlistService.onGetAllowlistDomains);
         messageHandler.addListener(MessageType.SaveAllowlistDomains, AllowlistService.handleDomainsSave);
-        messageHandler.addListener(MessageType.AddAllowlistDomainPopup, AllowlistService.onAddAllowlistDomain);
+        messageHandler.addListener(MessageType.AddAllowlistDomainPopup, AllowlistService.onAddAllowlistDomainFromPopup);
+        messageHandler.addListener(MessageType.UnAllowlistFrame, AllowlistService.onAddAllowlistDomainFromFilteringLog);
         messageHandler.addListener(MessageType.RemoveAllowlistDomain, AllowlistService.onRemoveAllowlistDomain);
 
-        settingsEvents.addListener(
-            SettingOption.AllowlistEnabled,
-            AllowlistService.onEnableStateChange,
-        );
-
-        settingsEvents.addListener(
-            SettingOption.DefaultAllowlistMode,
-            AllowlistService.onAllowlistModeChange,
-        );
+        settingsEvents.addListener(SettingOption.AllowlistEnabled, AllowlistService.onEnableStateChange);
+        settingsEvents.addListener(SettingOption.DefaultAllowlistMode, AllowlistService.onAllowlistModeChange);
 
         contextMenuEvents.addListener(
             ContextMenuAction.SiteFilteringOn,
             AllowlistService.enableSiteFilteringFromContextMenu,
         );
-
         contextMenuEvents.addListener(
             ContextMenuAction.SiteFilteringOff,
             AllowlistService.disableSiteFilteringFromContextMenu,
@@ -88,14 +82,25 @@ export class AllowlistService {
     }
 
     /**
-     * The listener for the allowlist domain addition event.
+     * The listener for the allowlist domain addition event from popup.
      *
      * @param message Message of type {@link AddAllowlistDomainPopupMessage}.
      */
-    private static async onAddAllowlistDomain(message: AddAllowlistDomainPopupMessage): Promise<void> {
+    private static async onAddAllowlistDomainFromPopup(message: AddAllowlistDomainPopupMessage): Promise<void> {
         const { tabId } = message.data;
 
         await AllowlistApi.addTabUrlToAllowlist(tabId);
+    }
+
+    /**
+     * The listener for the allowlist domain addition event from filtering log.
+     *
+     * @param message Message of type {@link AddAllowlistDomainPopupMessage}.
+     */
+    private static async onAddAllowlistDomainFromFilteringLog(message: UnAllowlistFrameMessage): Promise<void> {
+        const { tabId, tabRefresh } = message.data;
+
+        await AllowlistApi.removeTabUrlFromAllowlist(tabId, tabRefresh);
     }
 
     /**

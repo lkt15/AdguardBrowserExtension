@@ -155,18 +155,12 @@ class WizardStore {
         this.requestModalState = WIZARD_STATES.PREVIEW_REQUEST;
     }
 
-    // TODO: fix
     @action
     removeFromAllowlistHandler = async () => {
         this.submitAction();
         const { selectedTabId } = this.rootStore.logStore;
-        const { frameInfo } = await messenger.getTabFrameInfoById(selectedTabId);
 
-        if (!frameInfo) {
-            return;
-        }
-
-        await messenger.unAllowlistFrame(frameInfo);
+        await messenger.unAllowlistFrame(selectedTabId);
 
         this.closeModal();
     };

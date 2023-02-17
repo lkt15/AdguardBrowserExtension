@@ -297,8 +297,8 @@ class Messenger {
         await this.sendMessage(MessageType.AddUserRule, { ruleText });
     }
 
-    async unAllowlistFrame(frameInfo) {
-        await this.sendMessage(MessageType.UnAllowlistFrame, { frameInfo });
+    async unAllowlistFrame(tabId) {
+        await this.sendMessage(MessageType.UnAllowlistFrame, { tabId, tabRefresh: false });
     }
 
     async removeUserRule(ruleText) {
