@@ -48,9 +48,7 @@ export class FilterUpdateApi {
      * {@link RECENTLY_CHECKED_FILTER_TIMEOUT_MS recently} updated and those
      * that are custom filters and updates them.
      *
-     * Called when user manually run update:
-     * - on request from context menu;
-     * - on request from popup menu;
+     * Called:
      * - on user's action to enable filter or group of filters (even from enable
      * filters from Stealth menu);
      * - when the language filter is turned on automatically.
@@ -101,6 +99,11 @@ export class FilterUpdateApi {
      * After that update metadata for all those filters.
      *
      * Installed filters are filters whose rules are loaded in browser.storage.local.
+     *
+     * Called when user manually run update:
+     * - on request from context menu;
+     * - on request from popup menu;
+     * - from the update scheduler.
      *
      * @param forceUpdate Is it a force manual check by user action or first run
      * or not.
