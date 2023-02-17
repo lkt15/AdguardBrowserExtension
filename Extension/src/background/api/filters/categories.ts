@@ -35,6 +35,7 @@ import { Log } from '../../../common/log';
 
 import { CommonFilterApi } from './common';
 import { FilterMetadata, FiltersApi } from './main';
+import { FilterUpdateApi } from './update';
 
 /**
  * Filter data displayed in category section on options page.
@@ -100,10 +101,15 @@ export class Categories {
     public static async enableGroup(groupId: number): Promise<void> {
         const group = groupStateStorage.get(groupId);
 
+        // If enable group for the first time - enable and load recommended filters.
         if (!group?.toggled) {
             const recommendedFiltersIds = Categories.getRecommendedFilterIdsByGroupId(groupId);
             await FiltersApi.loadAndEnableFilters(recommendedFiltersIds);
         }
+
+        // Always checks updates for enabled filters of the group.
+        const enabledFiltersIds = this.getEnabledFiltersIdsByGroupId(groupId);
+        await FilterUpdateApi.checkForFiltersUpdates(enabledFiltersIds);
 
         groupStateStorage.enableGroups([groupId]);
     }
@@ -231,7 +237,7 @@ export class Categories {
     }
 
     /**
-     * Returns filters data from {@link metadataStorage},
+     * Returns filters merged data from {@link metadataStorage},
      * {@link customFilterMetadataStorage}, {@link filterStateStorage} and
      * {@link filterVersionStorage}.
      *
@@ -306,5 +312,25 @@ export class Categories {
      */
     private static selectFiltersByGroupId(groupId: number, filters: CategoriesFilterData[]): CategoriesFilterData[] {
         return filters.filter(filter => filter.groupId === groupId);
+    }
+
+    /**
+     * Returns ids of enabled filters for specified group id.
+     *
+     * @param groupId Group id.
+     *
+     * @returns List of filters ids.
+     */
+    private static getEnabledFiltersIdsByGroupId(groupId: number): number[] {
+        const filtersMetadata = FiltersApi.getFiltersMetadata();
+
+        return filtersMetadata
+            .filter(filter => filter.groupId === groupId)
+            .filter(({ filterId }) => {
+                const filterState = filterStateStorage.get(filterId);
+
+                return filterState?.enabled;
+            })
+            .map(({ filterId }) => filterId);
     }
 }

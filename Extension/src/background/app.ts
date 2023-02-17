@@ -141,7 +141,7 @@ export class App {
         await FiltersApi.init();
 
         // Initialize filters updates
-        await filterUpdateService.init();
+        await filterUpdateService.init(isInstall);
 
         /**
          * Initializes promo notifications:

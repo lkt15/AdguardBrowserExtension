@@ -48,6 +48,7 @@ import { CommonFilterApi } from './common';
 import { CustomFilterApi } from './custom';
 import { PageStatsApi } from './page-stats';
 import { HitStatsApi } from './hit-stats';
+import { FilterUpdateApi } from './update';
 
 export type FilterMetadata = RegularFilterMetadata | CustomFilterMetadata;
 
@@ -137,23 +138,24 @@ export class FiltersApi {
     }
 
     /**
-     * Update metadata from external source and download rules for uploaded filters.
+     * Update metadata from external source and download rules for not installed
+     * filters.
      *
-     * @param filtersIds Loaded filters ids.
+     * @param filtersIds Filter ids to load.
      * @param remote Is metadata and rules loaded from backend.
      */
     public static async loadFilters(filtersIds: number[], remote: boolean): Promise<void> {
         // Ignore loaded filters
         // Custom filters always has loaded state, so we don't need additional check
-        const unloadedFilters = filtersIds.filter(id => !FiltersApi.isFilterRulesIsLoaded(id));
+        const unloadedFiltersIds = filtersIds.filter(id => !FiltersApi.isFilterRulesIsLoaded(id));
 
-        if (unloadedFilters.length === 0) {
+        if (unloadedFiltersIds.length === 0) {
             return;
         }
 
         await FiltersApi.loadMetadata(remote);
 
-        await Promise.allSettled(unloadedFilters.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, remote)));
+        await Promise.allSettled(unloadedFiltersIds.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, remote)));
     }
 
     /**
@@ -163,10 +165,16 @@ export class FiltersApi {
      * @param filtersIds Filters ids.
      * @param remote Is metadata and rules loaded from backend.
      */
-    public static async loadAndEnableFilters(filtersIds: number[], remote = true): Promise<void> {
+    public static async loadAndEnableFilters(filtersIds: number[], remote = false): Promise<void> {
         await FiltersApi.loadFilters(filtersIds, remote);
 
         filterStateStorage.enableFilters(filtersIds);
+
+        if (!remote) {
+            // Checks updates for enabled filters if this isn't the load from
+            // remote resources, because it this case, filters already newest.
+            await FilterUpdateApi.checkForFiltersUpdates(filtersIds);
+        }
 
         // we enable filters groups if it was never enabled or disabled early
         FiltersApi.enableGroupsWereNotToggled(filtersIds);
