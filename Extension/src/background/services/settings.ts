@@ -88,7 +88,7 @@ export class SettingsService {
         settingsEvents.addListener(SettingOption.HideReferrer, Engine.debounceUpdate);
         settingsEvents.addListener(SettingOption.HideSearchQueries, Engine.debounceUpdate);
         settingsEvents.addListener(SettingOption.SendDoNotTrack, Engine.debounceUpdate);
-        settingsEvents.addListener(SettingOption.BlockChromeClientData, Engine.debounceUpdate);
+        settingsEvents.addListener(SettingOption.RemoveXClientData, Engine.debounceUpdate);
         settingsEvents.addListener(SettingOption.BlockWebRTC, Engine.debounceUpdate);
         settingsEvents.addListener(SettingOption.SelfDestructThirdPartyCookies, Engine.debounceUpdate);
         settingsEvents.addListener(SettingOption.SelfDestructThirdPartyCookiesTime, Engine.debounceUpdate);
@@ -142,7 +142,7 @@ export class SettingsService {
     static async reset(): Promise<boolean> {
         try {
             await SettingsApi.reset();
-            await Engine.update();
+            Engine.debounceUpdate();
 
             return true;
         } catch (e) {
@@ -160,7 +160,7 @@ export class SettingsService {
 
         const isImported = await SettingsApi.import(json);
 
-        await Engine.update();
+        Engine.debounceUpdate();
 
         listeners.notifyListeners(listeners.SettingsUpdated, isImported);
         return isImported;
