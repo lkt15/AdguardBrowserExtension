@@ -62,7 +62,6 @@ export class LocaleDetect {
         'jp': 'ja',
         // Dutch
         'nl': 'nl',
-        'sr': 'nl',
         // French
         'fr': 'fr',
         'mc': 'fr',
@@ -172,10 +171,10 @@ export class LocaleDetect {
         // Vietnamese:
         'vn': 'vi',
         // Thai:
-        'th', 'th',
+        'th': 'th',
         // Swedish:
-        'se', 'sv',
-        'ax', 'sv',
+        'se': 'sv',
+        'ax': 'sv',
     };
 
     private browsingLanguages: BrowsingLanguage[] = [];
