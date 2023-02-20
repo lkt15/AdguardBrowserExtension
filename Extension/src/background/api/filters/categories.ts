@@ -257,12 +257,12 @@ export class Categories {
             const filterVersion = filterVersionStorage.get(filterMetadata.filterId);
 
             if (!filterState) {
-                Log.error(`Can't find filter ${filterMetadata.filterId} state data`);
+                Log.error(`Cannot find filter ${filterMetadata.filterId} state data`);
                 return;
             }
 
             if (!filterVersion) {
-                Log.error(`Can't find filter ${filterMetadata.filterId} version data`);
+                Log.error(`Cannot find filter ${filterMetadata.filterId} version data`);
                 return;
             }
 
@@ -291,7 +291,7 @@ export class Categories {
             const groupState = groupStateStorage.get(groupMetadata.groupId);
 
             if (!groupState) {
-                Log.error(`Can't find group ${groupMetadata.groupId} state data`);
+                Log.error(`Cannot find group ${groupMetadata.groupId} state data`);
                 return;
             }
 

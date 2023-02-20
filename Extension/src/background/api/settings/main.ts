@@ -85,7 +85,7 @@ export class SettingsApi {
             const settings = settingsValidator.parse(data);
             settingsStorage.setCache(settings);
         } catch (e) {
-            Log.error('Can\'t init settings from storage: ', e);
+            Log.error('Cannot init settings from storage: ', e);
             Log.info('Reverting settings to default values');
             const settings = { ...defaultSettings };
 
@@ -151,7 +151,7 @@ export class SettingsApi {
             stealthModeEnabled: !settingsStorage.get(SettingOption.DisableStealthMode),
             filteringEnabled: !settingsStorage.get(SettingOption.DisableFiltering),
             stealth: {
-                blockChromeClientData: settingsStorage.get(SettingOption.BlockChromeClientData),
+                blockChromeClientData: settingsStorage.get(SettingOption.RemoveXClientData),
                 hideReferrer: settingsStorage.get(SettingOption.HideReferrer),
                 hideSearchQueries: settingsStorage.get(SettingOption.HideSearchQueries),
                 sendDoNotTrack: settingsStorage.get(SettingOption.SendDoNotTrack),
@@ -362,12 +362,21 @@ export class SettingsApi {
         await SettingsApi.importUserFilter(userFilter);
         SettingsApi.importAllowlist(allowlist);
 
-        const tasks = enabledFilters.map(async filterId => {
-            await CommonFilterApi.loadFilterRulesFromBackend(filterId, false);
-            filterStateStorage.enableFilters([filterId]);
-        });
+        const tasks = enabledFilters
+            .filter((filterId: number) => !CustomFilterApi.isCustomFilter(filterId))
+            .map(async (filterId: number) => {
+                await CommonFilterApi.loadFilterRulesFromBackend(filterId, false);
+                filterStateStorage.enableFilters([filterId]);
+            });
 
-        await Promise.allSettled(tasks);
+        const promises = await Promise.allSettled(tasks);
+
+        // Handles errors
+        promises.forEach((promise) => {
+            if (promise.status === 'rejected') {
+                Log.error(promise.reason);
+            }
+        });
 
         await CustomFilterApi.createFilters(customFilters as CustomFilterDTO[]);
         groupStateStorage.enableGroups(enabledGroups);
@@ -466,10 +475,10 @@ export class SettingsApi {
         [StealthOption.SendDoNotTrack]: sendDoNotTrack,
         [StealthOption.BlockWebRTC]: blockWebRTC,
         [StealthOption.RemoveXClientData]: removeXClientData,
-        [StealthOption.BlockThirdPartyCookies]: blockThirdPartyCookies,
-        [StealthOption.BlockThirdPartyCookiesTime]: blockThirdPartyCookiesTime,
-        [StealthOption.BlockFirstPartyCookies]: blockFirstPartyCookies,
-        [StealthOption.BlockFirstPartyCookiesTime]: blockFirstPartyCookiesTime,
+        [StealthOption.SelfDestructThirdPartyCookies]: selfDestructThirdPartyCookies,
+        [StealthOption.SelfDestructThirdPartyCookiesTime]: selfDestructThirdPartyCookiesTime,
+        [StealthOption.SelfDestructFirstPartyCookies]: selfDestructFirstPartyCookies,
+        [StealthOption.SelfDestructFirstPartyCookiesTime]: selfDestructFirstPartyCookiesTime,
         [StealthOption.BlockKnownTrackers]: blockKnownTrackers,
         [StealthOption.StripTrackingParams]: stripTrackingParam,
     }: StealthConfig): Promise<void> {
@@ -485,17 +494,17 @@ export class SettingsApi {
         settingsStorage.set(SettingOption.HideReferrer, hideReferrer);
         settingsStorage.set(SettingOption.HideSearchQueries, hideSearchQueries);
         settingsStorage.set(SettingOption.SendDoNotTrack, sendDoNotTrack);
-        settingsStorage.set(SettingOption.BlockChromeClientData, removeXClientData);
-        settingsStorage.set(SettingOption.SelfDestructThirdPartyCookies, blockThirdPartyCookies);
+        settingsStorage.set(SettingOption.RemoveXClientData, removeXClientData);
+        settingsStorage.set(SettingOption.SelfDestructThirdPartyCookies, selfDestructThirdPartyCookies);
 
-        if (blockThirdPartyCookiesTime) {
-            settingsStorage.set(SettingOption.SelfDestructThirdPartyCookiesTime, blockThirdPartyCookiesTime);
+        if (selfDestructThirdPartyCookiesTime) {
+            settingsStorage.set(SettingOption.SelfDestructThirdPartyCookiesTime, selfDestructThirdPartyCookiesTime);
         }
 
-        settingsStorage.set(SettingOption.SelfDestructFirstPartyCookies, blockFirstPartyCookies);
+        settingsStorage.set(SettingOption.SelfDestructFirstPartyCookies, selfDestructFirstPartyCookies);
 
-        if (blockFirstPartyCookiesTime) {
-            settingsStorage.set(SettingOption.SelfDestructFirstPartyCookiesTime, blockFirstPartyCookiesTime);
+        if (selfDestructFirstPartyCookiesTime) {
+            settingsStorage.set(SettingOption.SelfDestructFirstPartyCookiesTime, selfDestructFirstPartyCookiesTime);
         }
 
         if (stripTrackingParam) {
@@ -523,17 +532,17 @@ export class SettingsApi {
             [StealthOption.HideSearchQueries]: settingsStorage.get(SettingOption.HideSearchQueries),
             [StealthOption.SendDoNotTrack]: settingsStorage.get(SettingOption.SendDoNotTrack),
             [StealthOption.BlockWebRTC]: settingsStorage.get(SettingOption.BlockWebRTC),
-            [StealthOption.RemoveXClientData]: settingsStorage.get(SettingOption.BlockChromeClientData),
-            [StealthOption.BlockThirdPartyCookies]: (
+            [StealthOption.RemoveXClientData]: settingsStorage.get(SettingOption.RemoveXClientData),
+            [StealthOption.SelfDestructThirdPartyCookies]: (
                 settingsStorage.get(SettingOption.SelfDestructThirdPartyCookies)
             ),
-            [StealthOption.BlockThirdPartyCookiesTime]: (
+            [StealthOption.SelfDestructThirdPartyCookiesTime]: (
                 settingsStorage.get(SettingOption.SelfDestructThirdPartyCookiesTime)
             ),
-            [StealthOption.BlockFirstPartyCookies]: (
+            [StealthOption.SelfDestructFirstPartyCookies]: (
                 settingsStorage.get(SettingOption.SelfDestructFirstPartyCookies)
             ),
-            [StealthOption.BlockFirstPartyCookiesTime]: (
+            [StealthOption.SelfDestructFirstPartyCookiesTime]: (
                 settingsStorage.get(SettingOption.SelfDestructFirstPartyCookiesTime)
             ),
             [StealthOption.BlockKnownTrackers]: (

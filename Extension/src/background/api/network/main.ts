@@ -18,6 +18,7 @@
 import browser from 'webextension-polyfill';
 import FiltersDownloader from '@adguard/filters-downloader/browser';
 
+import { LOCALE_METADATA_FILE_NAME, LOCALE_I18N_METADATA_FILE_NAME } from '../../../../../constants';
 import { UserAgent } from '../../../common/user-agent';
 import {
     I18nMetadata,
@@ -132,14 +133,14 @@ export class Network {
      * @returns Object of {@link Metadata}.
      */
     public async getLocalFiltersMetadata(): Promise<Metadata> {
-        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/filters.json`);
+        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${LOCALE_METADATA_FILE_NAME}`);
 
         let response: ExtensionXMLHttpRequest;
 
         try {
             response = await Network.executeRequestAsync(url, 'application/json');
         } catch (e: unknown) {
-            const exMessage = e instanceof Error ? e.message : 'couldn\'t load local filters metadata';
+            const exMessage = e instanceof Error ? e.message : 'could not load local filters metadata';
             throw Network.createError(exMessage, url);
         }
 
@@ -165,14 +166,14 @@ export class Network {
      * @returns Object of {@link I18nMetadata}.
      */
     public async getLocalFiltersI18nMetadata(): Promise<I18nMetadata> {
-        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/filters_i18n.json`);
+        const url = browser.runtime.getURL(`${this.settings.localFiltersFolder}/${LOCALE_I18N_METADATA_FILE_NAME}`);
 
         let response: ExtensionXMLHttpRequest;
 
         try {
             response = await Network.executeRequestAsync(url, 'application/json');
         } catch (e: unknown) {
-            const exMessage = e instanceof Error ? e.message : 'couldn\'t load local filters i18n metadata';
+            const exMessage = e instanceof Error ? e.message : 'could not load local filters i18n metadata';
             throw Network.createError(exMessage, url);
         }
 
@@ -205,7 +206,7 @@ export class Network {
         try {
             response = await Network.executeRequestAsync(url, 'application/json');
         } catch (e: unknown) {
-            const exMessage = e instanceof Error ? e.message : 'couldn\'t load local script rules';
+            const exMessage = e instanceof Error ? e.message : 'could not load local script rules';
             throw Network.createError(exMessage, url);
         }
 
