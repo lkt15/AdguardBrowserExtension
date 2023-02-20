@@ -101,7 +101,8 @@ export class Categories {
     public static async enableGroup(groupId: number): Promise<void> {
         const group = groupStateStorage.get(groupId);
 
-        // If enable group for the first time - enable and load recommended filters.
+        // If this is the first time the group has been activated - load and
+        // enable the recommended filters.
         if (!group?.toggled) {
             const recommendedFiltersIds = Categories.getRecommendedFilterIdsByGroupId(groupId);
             await FiltersApi.loadAndEnableFilters(recommendedFiltersIds);
@@ -311,7 +312,7 @@ export class Categories {
      * @returns Aggregated filters data for specified group.
      */
     private static selectFiltersByGroupId(groupId: number, filters: CategoriesFilterData[]): CategoriesFilterData[] {
-        return filters.filter(filter => filter.groupId === groupId);
+        return filters.filter((filter: CategoriesFilterData) => filter.groupId === groupId);
     }
 
     /**
@@ -325,7 +326,7 @@ export class Categories {
         const filtersMetadata = FiltersApi.getFiltersMetadata();
 
         return filtersMetadata
-            .filter(filter => filter.groupId === groupId)
+            .filter((filter: FilterMetadata) => filter.groupId === groupId)
             .filter(({ filterId }) => {
                 const filterState = filterStateStorage.get(filterId);
 

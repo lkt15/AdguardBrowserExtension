@@ -139,7 +139,7 @@ export class FiltersApi {
 
     /**
      * Update metadata from external source and download rules for not installed
-     * filters.
+     * (not added to the browser storage) filters.
      *
      * @param filtersIds Filter ids to load.
      * @param remote Is metadata and rules loaded from backend.
@@ -147,7 +147,7 @@ export class FiltersApi {
     public static async loadFilters(filtersIds: number[], remote: boolean): Promise<void> {
         // Ignore loaded filters
         // Custom filters always has loaded state, so we don't need additional check
-        const unloadedFiltersIds = filtersIds.filter(id => !FiltersApi.isFilterRulesIsLoaded(id));
+        const unloadedFiltersIds = filtersIds.filter((id) => !FiltersApi.isFilterRulesIsLoaded(id));
 
         if (unloadedFiltersIds.length === 0) {
             return;
@@ -155,7 +155,9 @@ export class FiltersApi {
 
         await FiltersApi.loadMetadata(remote);
 
-        await Promise.allSettled(unloadedFiltersIds.map(id => CommonFilterApi.loadFilterRulesFromBackend(id, remote)));
+        await Promise.allSettled(unloadedFiltersIds.map((id) => {
+            return CommonFilterApi.loadFilterRulesFromBackend(id, remote);
+        }));
     }
 
     /**
@@ -171,8 +173,9 @@ export class FiltersApi {
         filterStateStorage.enableFilters(filtersIds);
 
         if (!remote) {
-            // Checks updates for enabled filters if this isn't the load from
-            // remote resources, because it this case, filters already newest.
+            // Checks for updates to enabled filters, unless it is a load from
+            // remote resources, as in this case the filters are already
+            // up to date.
             await FilterUpdateApi.checkForFiltersUpdates(filtersIds);
         }
 
@@ -469,5 +472,42 @@ export class FiltersApi {
             });
 
         await Promise.allSettled(tasks);
+    }
+
+    /**
+     * Selects filters ids where filters are installed and enabled and only those
+     * that have their group enabled.
+     *
+     * @returns List of installed and enabled filters and only those
+     * that have their group enabled.
+     */
+    public static getInstalledAndEnabledFiltersIds(): number[] {
+        // Collects filters ids and their states and filters groups ids.
+        const filtersStates = filterStateStorage.getData();
+        const enabledGroupsIds = groupStateStorage.getEnabledGroups();
+        const allFiltersIds = Object.keys(filtersStates).map((id) => Number(id));
+
+        // Selects to check only installed and enabled filters and only those
+        // that have their group enabled.
+        return allFiltersIds
+            .filter((id) => {
+                const filterState = filtersStates[id];
+                if (!filterState) {
+                    return false;
+                }
+
+                const { installed, enabled } = filterState;
+                if (!installed || !enabled) {
+                    return false;
+                }
+
+                const groupMetadata = metadataStorage.getGroupByFilterId(id);
+                if (!groupMetadata) {
+                    return false;
+                }
+
+                const groupEnabled = enabledGroupsIds.includes(groupMetadata.groupId);
+                return groupEnabled;
+            });
     }
 }

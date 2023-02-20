@@ -40,7 +40,7 @@ export const filterVersionDataValidator = zod.object({
      */
     lastUpdateTime: zod.number(),
     /**
-     * Data from filter metadata: after how long to check the update.
+     * Property from filter metadata: after how long to check the update.
      */
     expires: zod.number(),
 });

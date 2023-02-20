@@ -15,13 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with AdGuard Browser Extension. If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-    filterStateStorage,
-    filterVersionStorage,
-    groupStateStorage,
-    metadataStorage,
-    settingsStorage,
-} from '../../storages';
+import { filterVersionStorage, settingsStorage } from '../../storages';
 import {
     SettingOption,
     RegularFilterMetadata,
@@ -44,9 +38,8 @@ export class FilterUpdateApi {
     private static readonly RECENTLY_CHECKED_FILTER_TIMEOUT_MS = 1000 * 60 * 5;
 
     /**
-     * Selects from the provided list of filters only those that have not been
-     * {@link RECENTLY_CHECKED_FILTER_TIMEOUT_MS recently} updated and those
-     * that are custom filters and updates them.
+     * Filters provided list of filters via {@link selectFiltersIdsToUpdate} ids
+     * and update them.
      *
      * Called:
      * - on user's action to enable filter or group of filters (even from enable
@@ -58,26 +51,7 @@ export class FilterUpdateApi {
      * @param filtersIds List of filters ids to check.
      */
     public static async checkForFiltersUpdates(filtersIds: number[]): Promise<FilterMetadata[]> {
-        const filtersVersions = filterVersionStorage.getData();
-
-        // Skip recently checked (added, enabled or updated by the scheduler)
-        // filters from provided list of filters
-        const filtersToCheck = filtersIds.filter((id) => {
-            // Always check for updates for custom filters
-            const isCustom = CustomFilterApi.isCustomFilter(Number(id));
-
-            // Select only not recently checked filters
-            const filterVersion = filtersVersions[Number(id)];
-            const outdated = filterVersion !== undefined
-                ? Date.now() - filterVersion.lastCheckTime > this.RECENTLY_CHECKED_FILTER_TIMEOUT_MS
-                : true;
-
-            return isCustom || outdated;
-        });
-
-        if (filtersToCheck.length === 0) {
-            return [];
-        }
+        const filtersToCheck = FilterUpdateApi.selectFiltersIdsToUpdate(filtersIds);
 
         const updatedFilters = await FilterUpdateApi.updateFilters(filtersToCheck);
 
@@ -121,66 +95,22 @@ export class FilterUpdateApi {
             return [];
         }
 
-        // Collects filters ids and their states and filters groups ids.
-        const filtersStates = filterStateStorage.getData();
-        const enabledGroupsIds = groupStateStorage.getEnabledGroups();
-        const allFiltersIds = Object.keys(filtersStates).map((id) => Number(id));
-
         // Selects to check only installed and enabled filters and only those
         // that have their group enabled.
-        const installedAndEnabledFilters = allFiltersIds
-            .filter((id) => {
-                const filterState = filtersStates[id];
-                if (!filterState) {
-                    return false;
-                }
-
-                const { installed, enabled } = filterState;
-                if (!installed || !enabled) {
-                    return false;
-                }
-
-                const groupMetadata = metadataStorage.getGroupByFilterId(id);
-                if (!groupMetadata) {
-                    return false;
-                }
-
-                const groupEnabled = enabledGroupsIds.includes(groupMetadata.groupId);
-                return groupEnabled;
-            });
+        const installedAndEnabledFilters = FiltersApi.getInstalledAndEnabledFiltersIds();
 
         // If it is a force check - updates all installed and enabled filters.
         let filtersIdsToUpdate = installedAndEnabledFilters;
 
         // If not a force check - updates only outdated filters.
         if (!forceUpdate) {
-            const filtersVersions = filterVersionStorage.getData();
-
-            filtersIdsToUpdate = installedAndEnabledFilters.filter((id) => {
-                const filterVersion = filtersVersions[id];
-                if (!filterVersion) {
-                    return false;
-                }
-
-                const { lastCheckTime, expires } = filterVersion;
-
-                // By default, checks the expires field for each filter.
-                if (updatePeriod === DEFAULT_FILTERS_UPDATE_PERIOD) {
-                    // If it is time to check the update, adds it to the array.
-                    return lastCheckTime + expires <= Date.now();
-                }
-
-                // Check, if the renewal period of each filter has passed.
-                // If it is time to check the renewal, add to the array.
-                return lastCheckTime + updatePeriod <= Date.now();
-            });
+            filtersIdsToUpdate = FilterUpdateApi.selectExpiredFilters(updatePeriod, installedAndEnabledFilters);
         }
 
         const updatedFilters = await FilterUpdateApi.updateFilters(filtersIdsToUpdate);
 
         // Updates last check time of all installed and enabled filters.
-        const installedFiltersIds = installedAndEnabledFilters;
-        filterVersionStorage.refreshLastCheckTime(installedFiltersIds);
+        filterVersionStorage.refreshLastCheckTime(filtersIdsToUpdate);
 
         return updatedFilters;
     }
@@ -219,5 +149,63 @@ export class FilterUpdateApi {
         await Promise.allSettled(updateTasks);
 
         return updatedFiltersMetadata;
+    }
+
+    /**
+     * Selects from the provided list of filters only those that have not been
+     * {@link RECENTLY_CHECKED_FILTER_TIMEOUT_MS recently} updated (added,
+     * enabled or updated by the scheduler) and those that are custom filters.
+     *
+     * @param filtersIds List of filter ids.
+     *
+     * @returns List of filter ids to update.
+     */
+    private static selectFiltersIdsToUpdate(filtersIds: number[]): number[] {
+        const filtersVersions = filterVersionStorage.getData();
+
+        return filtersIds.filter((id: number) => {
+            // Always check for updates for custom filters
+            const isCustom = CustomFilterApi.isCustomFilter(Number(id));
+
+            // Select only not recently checked filters
+            const filterVersion = filtersVersions[Number(id)];
+            const outdated = filterVersion !== undefined
+                ? Date.now() - filterVersion.lastCheckTime > FilterUpdateApi.RECENTLY_CHECKED_FILTER_TIMEOUT_MS
+                : true;
+
+            return isCustom || outdated;
+        });
+    }
+
+    /**
+     * Selects only outdated filters from the provided filter list, based on the
+     * provided filter update period from the settings.
+     *
+     * @param updatePeriod Period of checking updates in ms.
+     * @param filterIds List of filter ids.
+     *
+     * @returns List of outdated filter ids.
+     */
+    private static selectExpiredFilters(updatePeriod: number, filterIds: number[]): number[] {
+        const filtersVersions = filterVersionStorage.getData();
+
+        return filterIds.filter((id: number) => {
+            const filterVersion = filtersVersions[id];
+            if (!filterVersion) {
+                return false;
+            }
+
+            const { lastCheckTime, expires } = filterVersion;
+
+            // By default, checks the expires field for each filter.
+            if (updatePeriod === DEFAULT_FILTERS_UPDATE_PERIOD) {
+                // If it is time to check the update, adds it to the array.
+                return lastCheckTime + expires <= Date.now();
+            }
+
+            // Check, if the renewal period of each filter has passed.
+            // If it is time to check the renewal, add to the array.
+            return lastCheckTime + updatePeriod <= Date.now();
+        });
     }
 }
